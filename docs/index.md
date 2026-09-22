@@ -7,6 +7,7 @@ em **C** e **Python**. Ele reúne, em um único lugar:
 
 - regras de **estilo de código** para C e Python;
 - a **Den Architecture**, um padrão de organização em camadas;
+- a **política de gerenciamento de memória** baseada em lifetime e arena allocation;
 - **arquivos de configuração prontos a usar** para as ferramentas do ecossistema;
 - **documentação técnica centralizada** e publicada automaticamente.
 
@@ -83,5 +84,6 @@ cp configs/pyproject.toml  meu-projeto/pyproject.toml
 Consulte os guias específicos:
 
 - [Padrão C](c-standard.md)
+- [Memory Management](memory-management.md)
 - [Padrão Python](python-standard.md)
 - [Arquitetura](architecture.md)

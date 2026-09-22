@@ -203,6 +203,41 @@ class UserRepository:
         ...  # acesso a base de dados/ficheiros fica aqui
 ```
 
+## Memória e Ownership na Den Architecture
+
+A política de memória (ver [Memory Management](memory-management.md)) distribui
+responsabilidades pelas camadas sem criar dependências arquiteturais indevidas:
+
+| Camada | Papel em relação à memória |
+| ------ | -------------------------- |
+| `vanguard/` | **Define e orquestra o lifetime** de request/job/contexto. É o owner da arena. |
+| `senses/` | **Valida entradas e limites antes da alocação** (tamanhos, contagens, overflow). Não é um *memory manager*. |
+| `adapters/` | **Pode conter detalhes concretos de infraestrutura**, incluindo a implementação concreta de memória quando aplicável. |
+| `den/` | **Permanece independente do allocator concreto.** Pode trabalhar com memória fornecida pelo chamador. |
+| `kit/` | Testa propriedades de **lifetime e segurança** dos consumidores. |
+
+**Ponto normativo:** a implementação concreta de um allocator é um **detalhe de
+infraestrutura** e não deve ser acoplada ao **Domain Core**.
+
+A Den Architecture **não** exige que toda implementação de arena resida em
+`adapters/` em todos os projetos. Um projeto consumidor pode escolher colocá-la
+em `adapters/` — o que é compatível com a arquitetura — mas o requisito é o
+**isolamento do Domain Core**, não uma localização obrigatória.
+
+`den/` **não deve** conhecer `arena_t`, `arena_alloc()` ou qualquer dependência
+de infraestrutura. Nesta versão não é introduzido nenhum contrato de allocator
+no domínio (`den_allocator_t` **não** existe na v1.1.0).
+
+```text
+vanguard/   owner da arena; define o lifetime (request/job)
+    │
+    ├── senses/   valida tamanho, limites e overflow antes de alocar
+    │
+    ├── adapters/ implementação concreta de memória quando aplicável
+    │
+    └── den/      recebe memória pronta; ignora o allocator concreto
+```
+
 ## Anti-patterns
 
 | Anti-pattern | Por que é errado |
@@ -213,6 +248,9 @@ class UserRepository:
 | Acessar base de dados diretamente em `vanguard/` | I/O pertence exclusivamente a `adapters/` |
 | Lógica de negócio em `vanguard/` | `vanguard/` orquestra; não decide regras de negócio |
 | Camada de produção importar `kit/` | `kit/` é apenas para testes |
+| `den/` conhecer `arena_t`/`arena_alloc()` ou qualquer allocator concreto | Acopla o Domain Core a detalhes de infraestrutura |
+| `free()` em memória pertencente a uma arena | Mistura dois modelos de ownership |
+| Retornar ponteiro de arena que será destruída antes do uso | Dangling pointer / use-after-reset |
 | Criar uma sexta camada sem justificativa | Aumenta acoplamento e dilui responsabilidades |
 
 > **Regra de ouro:** se você não consegue explicar em uma frase qual é a

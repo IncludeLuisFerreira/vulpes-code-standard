@@ -11,7 +11,7 @@
 
 [project]
 name = "vulpes-code-standard"
-version = "1.0.0"
+version = "1.1.0"
 description = "Padrao de codigo e arquitetura Vulpes para C e Python."
 requires-python = ">=3.10"
 

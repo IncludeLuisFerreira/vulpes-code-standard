@@ -1,4 +1,4 @@
-# PRD — Implementação do Vulpes Code Standard v1.0.0
+# PRD — Implementação do Vulpes Code Standard v1.1.0
 
 ## 1. Visão Geral e Objetivos
 
@@ -120,6 +120,7 @@ vulpes-code-standard/
 │   ├── index.md                 # Visão geral do padrão
 │   ├── architecture.md          # Especificação da Den Architecture
 │   ├── c-standard.md            # Guia de estilo C
+│   ├── memory-management.md     # Política de gerenciamento de memória
 │   └── python-standard.md       # Guia de estilo Python
 │
 ├── mkdocs.yml                   # Configuração do site de documentação
@@ -244,6 +245,70 @@ def calculate_buffer_size(data: bytes) -> int:
 
 ---
 
+# 4.3. Gerenciamento de Memória (Arena Allocation)
+
+O padrão adota **preferência por alocação baseada em lifetime**: objetos que
+possuem o mesmo lifetime devem, quando possível, compartilhar um contexto de
+memória (uma **arena**).
+
+```text
+ALLOCATION LIFETIME ≈ ARENA LIFETIME
+```
+
+Arena allocation é **preferencial** quando o lifetime dos objetos pode ser
+agrupado. `malloc`, `calloc`, `realloc` e `free` **não** são proibidos: continuam
+permitidos quando forem semanticamente apropriados.
+
+### Preferred
+
+Arena allocators para: request-scoped data, parser state, ASTs, estruturas
+temporárias, batch processing, command execution contexts, contextos HTTP/API,
+grafos de vida curta, buffers temporários e objetos com lifetime comum.
+
+### Acceptable
+
+`malloc`/`calloc`/`realloc`/`free` para: objetos de lifetime independente,
+estruturas que sobrevivem à arena, memória compartilhada entre subsistemas,
+recursos cujo ownership exige liberação individual, estruturas que
+crescem/reduzem independentemente e integração com APIs externas que exigem
+allocator específico.
+
+### Discouraged
+
+Evitar, sem justificativa, `malloc`/`calloc`/`free` repetidos em loops ou
+caminhos de alta frequência quando as alocações possuem lifetime comum.
+
+### Ownership
+
+1. Toda arena deve possuir owner explícito.
+2. O owner define o lifetime da arena.
+3. Allocations pertencem à arena.
+4. Memória pertencente à arena não deve receber `free()` individual.
+5. O owner executa `reset`/`destroy`.
+6. Ponteiros não podem sobreviver ao lifetime da arena.
+7. Não retornar ponteiros para arena destruída antes do uso.
+8. Memória request-scoped não deve virar referência de longa duração.
+9. Arena não pode ser usada para mascarar ownership indefinido.
+
+### Segurança
+
+Toda implementação de arena deve tratar: `size_t` overflow, integer overflow,
+multiplication overflow, alignment, padding, alignment overflow, OOM, `NULL`,
+exhaustion, invalid lifetime, use-after-reset, dangling pointers e double
+destruction. É explicitamente rejeitada uma implementação equivalente a
+`arena->used += size;` sem validação de overflow e bounds.
+
+### Quando arena não é adequada
+
+Globals, singletons, caches de longa duração, lifetimes independentes, memória
+que exige `free` individual, objetos de lifetime muito variável, objetos
+compartilhados entre threads com lifetime independente, APIs externas com
+ownership específico e recursos com destrutores próprios.
+
+> A especificação completa desta política está em `docs/memory-management.md`.
+
+---
+
 # 5. Especificação de Entregáveis
 
 ## E1. Arquivos de Configuração
@@ -327,8 +392,24 @@ Deve documentar:
 * Convenções de nomenclatura;
 * Formatação;
 * Segurança;
-* Gestão de memória;
+* Resumo da política de memória, com link para `docs/memory-management.md`;
 * Uso do `.clang-format`.
+
+#### `docs/memory-management.md`
+
+Deve ser a referência normativa completa da política de gerenciamento de memória:
+
+* Princípio de lifetime (`ALLOCATION LIFETIME ≈ ARENA LIFETIME`);
+* Arena allocation;
+* Preferred, Acceptable e Discouraged;
+* Ownership;
+* Safety requirements;
+* Casos em que arena não é adequada;
+* Recursos externos e destrutores;
+* Threading e reallocation;
+* Integração com a Den Architecture;
+* Estratégia de migração;
+* Exemplos e anti-patterns.
 
 #### `docs/python-standard.md`
 
@@ -438,6 +519,7 @@ configs/pyproject.toml
 docs/index.md
 docs/architecture.md
 docs/c-standard.md
+docs/memory-management.md
 docs/python-standard.md
 mkdocs.yml
 README.md
@@ -496,15 +578,65 @@ deve explicitar claramente:
 
 ---
 
+## CA-05 — Política de Memória Documentada
+
+O ficheiro:
+
+```text
+docs/memory-management.md
+```
+
+deve ser a referência normativa completa da política de memória, cobrindo:
+
+* o princípio de lifetime (`ALLOCATION LIFETIME ≈ ARENA LIFETIME`);
+* arena como mecanismo preferencial;
+* Preferred, Acceptable e Discouraged;
+* a relação com a Den Architecture;
+* a estratégia de migração.
+
+O ficheiro `docs/c-standard.md` deve conter um resumo da política e um link para
+a documentação canônica.
+
+---
+
+## CA-06 — Ownership e Casos Não Adequados
+
+A documentação da política de memória deve explicitar:
+
+* as regras de ownership (owner explícito, reset/destroy, proibição de `free()`
+  individual em memória da arena, proibição de ponteiros sobreviventes);
+* os requisitos de segurança (overflow, alignment, OOM, use-after-reset,
+  dangling pointers, double destruction);
+* os casos em que arena **não** é adequada;
+* o tratamento de recursos externos e destrutores.
+
+---
+
+## CA-07 — Exemplos de Alocação
+
+A documentação deve apresentar exemplos conceituais de:
+
+* alocação desencorajada (alocações independentes com o mesmo lifetime);
+* alocação preferencial (arena com lifetime agrupado);
+* alocação aceitável (lifetime independente).
+
+Os exemplos são conceituais: nenhuma arena allocator deve ser implementada no
+repositório do Standard.
+
+---
+
 # 11. Definição de Pronto
 
-A implementação do **Vulpes Code Standard v1.0.0** será considerada concluída quando:
+A implementação do **Vulpes Code Standard v1.1.0** será considerada concluída quando:
 
 * [ ] A estrutura oficial do repositório estiver criada;
 * [ ] Os ficheiros de configuração estiverem implementados;
 * [ ] A documentação das cinco camadas estiver completa;
 * [ ] A documentação de C estiver completa;
 * [ ] A documentação de Python estiver completa;
+* [ ] A política de gerenciamento de memória estiver documentada;
+* [ ] As regras de ownership e os casos em que arena não é adequada estiverem documentados;
+* [ ] A integração da política de memória com a Den Architecture estiver documentada;
 * [ ] O `mkdocs.yml` estiver configurado;
 * [ ] O tema Material estiver operacional;
 * [ ] O workflow de GitHub Actions estiver funcional;
@@ -527,6 +659,7 @@ Ao final da implementação, o repositório **Vulpes Code Standard** deverá fun
 3. **Configuração de ferramentas de desenvolvimento**;
 4. **Validação automática de qualidade**;
 5. **Documentação técnica centralizada**;
-6. **Integração com IDEs e pipelines CI/CD**.
+6. **Integração com IDEs e pipelines CI/CD**;
+7. **Política de gerenciamento de memória baseada em lifetime e arena allocation**.
 
-A versão **v1.0.0** estabelece, portanto, o contrato técnico inicial para a criação e manutenção de projetos da equipa sob o padrão Vulpes.
+A versão **v1.1.0** estabelece, portanto, o contrato técnico para a criação e manutenção de projetos da equipa sob o padrão Vulpes.

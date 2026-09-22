@@ -71,8 +71,13 @@ vulpes-code-standard/
   tipos com sufixo `_t`; ponteiros alinhados à variável.
 - Proibição de `strcpy`/`sprintf`; preferência por `strncpy`/`snprintf` com
   validação em `senses/`.
+- **Memória:** preferência por alocação baseada em lifetime — arena allocation é
+  preferencial quando os objetos compartilham um lifetime comum. `malloc`,
+  `calloc`, `realloc` e `free` **não** são proibidos; continuam permitidos quando
+  semanticamente apropriados.
 
-Guia completo: [docs/c-standard.md](docs/c-standard.md).
+Guias completos: [docs/c-standard.md](docs/c-standard.md) e
+[docs/memory-management.md](docs/memory-management.md).
 
 ### Python
 

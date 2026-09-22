@@ -27,6 +27,7 @@ nav:
   - Início: index.md
   - Arquitetura: architecture.md
   - Padrão C: c-standard.md
+  - Memory Management: memory-management.md
   - Padrão Python: python-standard.md
 
 plugins:

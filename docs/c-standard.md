@@ -107,15 +107,41 @@ snprintf(dest, sizeof(dest), "%s", src);
 O uso de funções com limite de memória deve ser acompanhado de **validação
 adequada na camada `senses/`** (limites de buffer, tamanhos e dados de entrada).
 
-## Gestão de memória
+## Memory Management
+
+O Vulpes Code Standard adota **preferência por alocação baseada em lifetime**:
+objetos que possuem o mesmo lifetime deveriam, quando possível, compartilhar um
+contexto de memória (uma **arena**).
+
+```text
+ALLOCATION LIFETIME ≈ ARENA LIFETIME
+```
+
+- **Preferencial** — arena allocation para dados request-scoped, parser state,
+  ASTs, estruturas temporárias, batch processing e objetos com lifetime comum.
+- **Aceitável** — `malloc`/`calloc`/`realloc`/`free` para objetos de lifetime
+  independente, memória compartilhada ou ownership individual.
+- **Desencorajado** — `malloc`/`calloc`/`free` repetidos em loops ou caminhos de
+  alta frequência quando as alocações têm lifetime comum.
+
+`malloc`, `calloc`, `realloc` e `free` **não são proibidos**; devem ser usados
+quando forem semanticamente apropriados.
+
+### Regras gerais de memória
 
 - Inicialize variáveis e estruturas antes do uso.
 - Verifique o retorno de funções de alocação (`malloc`, `calloc`, `realloc`).
-- Libere toda memória alocada (`free`) e atribua `NULL` ao ponteiro liberado.
+- Libere memória de ownership individual com `free` e atribua `NULL` ao ponteiro.
+- **Não** use `free()` em memória pertencente a uma arena.
 - Use `sizeof` sobre a variável, não sobre o tipo, sempre que possível.
 - Evite vazamentos em caminhos de erro; centralize a limpeza.
-- Prefira buffers de tamanho fixo e conhecido em `den/`; alocação dinâmica
-  pertence à infraestrutura quando inevitável.
+- Recursos externos (`FILE*`, sockets, fds, mutexes) exigem cleanup próprio
+  **antes** do reset/destroy da arena.
+- Prefira buffers de tamanho fixo e conhecido em `den/`; o domínio não conhece
+  allocator concreto.
+
+> A política completa — ownership, segurança, threading, realloc e casos em que
+> arena **não** é adequada — está em **[Memory Management](memory-management.md)**.
 
 ## Uso do `.clang-format`
 
