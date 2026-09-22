@@ -1,5 +1,7 @@
 # Vulpes Code Standard
 
+![Mascote Vulpes](assets/vulpes-mascot.png){ align=right width="240" }
+
 O **Vulpes Code Standard** é o contrato técnico oficial para os projetos da equipe
 em **C** e **Python**. Ele reúne, em um único lugar:
 

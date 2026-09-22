@@ -18,10 +18,10 @@ theme:
     - navigation.top
     - search.suggest
     - content.code.copy
-  # A mascote (assets/vulpes-mascot.png) será referenciada aqui assim que o
-  # asset oficial for fornecido (OQ-08):
-  # logo: assets/vulpes-mascot.png
-  # favicon: assets/vulpes-mascot.png
+  # A mascote oficial (assets/vulpes-mascot.png) é resolvida pelo MkDocs
+  # relativa a docs/, por isso também existe em docs/assets/vulpes-mascot.png.
+  logo: assets/vulpes-mascot.png
+  favicon: assets/vulpes-mascot.png
 
 nav:
   - Início: index.md
