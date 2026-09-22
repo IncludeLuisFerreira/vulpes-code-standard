@@ -1,0 +1,51 @@
+site_name: Vulpes Code Standard
+site_description: Padrão oficial de código e arquitetura para projetos em C e Python.
+site_url: https://includeluisferreira.github.io/vulpes-code-standard/
+repo_url: https://github.com/IncludeLuisFerreira/vulpes-code-standard
+repo_name: IncludeLuisFerreira/vulpes-code-standard
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt
+  palette:
+    scheme: slate
+    primary: teal
+    accent: cyan
+  features:
+    - navigation.instant
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+  # A mascote (assets/vulpes-mascot.png) será referenciada aqui assim que o
+  # asset oficial for fornecido (OQ-08):
+  # logo: assets/vulpes-mascot.png
+  # favicon: assets/vulpes-mascot.png
+
+nav:
+  - Início: index.md
+  - Arquitetura: architecture.md
+  - Padrão C: c-standard.md
+  - Padrão Python: python-standard.md
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true

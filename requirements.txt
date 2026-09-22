@@ -1,0 +1,5 @@
+# Dependências de documentação do Vulpes Code Standard.
+# Instale com: pip install -r requirements.txt
+#
+# mkdocs-material traz o MkDocs e o pymdown-extensions como dependências.
+mkdocs-material>=9.5,<10

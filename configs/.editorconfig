@@ -1,0 +1,42 @@
+# Vulpes Code Standard — EditorConfig
+# https://editorconfig.org
+#
+# Este arquivo e um template distribuivel. Copie-o para a raiz do seu projeto
+# consumidor como `.editorconfig` para que editores e IDEs apliquem as regras.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{c,h}]
+indent_size = 4
+
+[*.py]
+indent_size = 4
+
+[*.{sh,bash,zsh}]
+indent_size = 4
+
+[*.{md,markdown}]
+indent_size = 2
+# Em Markdown, dois espacos finais representam quebra de linha explicita.
+trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.{toml,ini,cfg}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+[Makefile]
+# A sintaxe do Make exige tabulacoes; unica excecao a regra "tabs proibidos".
+indent_style = tab

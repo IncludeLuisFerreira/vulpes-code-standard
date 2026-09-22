@@ -1,0 +1,62 @@
+---
+# Vulpes Code Standard — Clang Format
+# Base: LLVM. Testado com clang-format 18.
+#
+# Este arquivo e um template distribuivel. Copie-o para a raiz do seu projeto
+# consumidor como `.clang-format` para que IDEs (VS Code, CLion) e a CLI o
+# descubram automaticamente.
+#
+# Nota: o requisito "C11 ou superior" e aplicado pelo compilador (`-std=c11`)
+# e documentado em docs/c-standard.md. O clang-format formata codigo, mas nao
+# valida a versao da linguagem. Nomenclatura (snake_case, UPPER_SNAKE_CASE,
+# sufixo _t) e seguranca (proibicao de strcpy/sprintf) tambem sao regras
+# documentais: clang-format nao as aplica nem as proibe.
+
+Language: Cpp
+BasedOnStyle: LLVM
+
+# Indentacao
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# Largura de linha
+ColumnLimit: 100
+
+# Chaves (K&R / Attach / OTBS)
+BreakBeforeBraces: Attach
+
+# Ponteiros alinhados a variavel: `void *ptr;`
+PointerAlignment: Right
+DerivePointerAlignment: false
+
+# Funcoes e blocos curtos
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+IndentCaseLabels: false
+
+# Linhas em branco
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+
+# Includes
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+# Casts e listas
+SpaceAfterCStyleCast: false
+Cpp11BracedListStyle: true
+
+# Alinhamento consecutivo (desativado para manter diffs pequenos)
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+
+# Comentarios
+ReflowComments: true
+
+# Empacotamento de argumentos/parametros
+BinPackArguments: true
+BinPackParameters: true
+...

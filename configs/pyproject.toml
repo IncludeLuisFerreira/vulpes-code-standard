@@ -1,0 +1,66 @@
+# Vulpes Code Standard — Configuracao Python
+#
+# Este arquivo e um template distribuivel. Copie-o para a raiz do seu projeto
+# consumidor como `pyproject.toml` para que Ruff, Black e Pytest o descubram.
+#
+# Requisitos do padrao:
+#   - Python 3.10+
+#   - Ruff + Black
+#   - Comprimento de linha: 88
+#   - Type hints obrigatorios em 100% de argumentos e retornos
+
+[project]
+name = "vulpes-code-standard"
+version = "1.0.0"
+description = "Padrao de codigo e arquitetura Vulpes para C e Python."
+requires-python = ">=3.10"
+
+# ---------------------------------------------------------------------------
+# Ruff — linter e formatador
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+# E/F/W: pycodestyle e pyflakes
+# I:     isort (ordenacao de imports)
+# N:     pep8-naming (snake_case, PascalCase, UPPER_SNAKE_CASE)
+# UP:    pyupgrade
+# B:     flake8-bugbear
+# A:     flake8-builtins
+# C4:    flake8-comprehensions
+# SIM:   flake8-simplify
+# ANN:   flake8-annotations (type hints obrigatorios)
+# TID:   flake8-tidy-imports
+# RUF:   regras especificas do Ruff
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "ANN", "TID", "RUF"]
+# ANN401: permite *args/**kwargs sem anotacao quando o tipo e genuinamente dinamico.
+ignore = ["ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+# Em testes, asserts sao o mecanismo de verificacao esperado.
+"kit/**" = ["S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# Black — formatador compativel com Ruff
+# ---------------------------------------------------------------------------
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "7.0"
+# Os testes residem na camada `kit/` (A Ninhada) da Den Architecture.
+testpaths = ["kit"]
+python_files = ["test_*.py"]
+addopts = "-ra --strict-markers --strict-config"
