@@ -4,7 +4,6 @@
 
 # Vulpes Code Standard
 
-<img src="assets/vulpes-mascot.png" alt="Mascote Vulpes" width="240" align="right" />
 
 Padrão oficial de código e arquitetura da equipe para projetos em **C** e
 **Python**, com documentação publicada automaticamente via GitHub Pages.
