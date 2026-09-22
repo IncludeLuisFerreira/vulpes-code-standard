@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/vulpes-banner.jpeg" alt="Vulpes Code Standard — banner oficial" />
+</p>
+
 # Vulpes Code Standard
 
 <img src="assets/vulpes-mascot.png" alt="Mascote Vulpes" width="240" align="right" />

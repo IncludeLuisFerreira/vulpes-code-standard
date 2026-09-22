@@ -18,10 +18,14 @@ theme:
     - navigation.top
     - search.suggest
     - content.code.copy
-  # A mascote oficial (assets/vulpes-mascot.png) é resolvida pelo MkDocs
-  # relativa a docs/, por isso também existe em docs/assets/vulpes-mascot.png.
+  # Assets resolvidos pelo MkDocs relativos a docs/, por isso também existem em
+  # docs/assets/. A mascote permanece como logo da navegação; o favicon é o ícone
+  # oficial do site.
   logo: assets/vulpes-mascot.png
-  favicon: assets/vulpes-mascot.png
+  favicon: assets/vulpes-favicon.png
+
+extra_css:
+  - assets/extra.css
 
 nav:
   - Início: index.md

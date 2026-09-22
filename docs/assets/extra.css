@@ -1,0 +1,8 @@
+/* Vulpes Code Standard — CSS mínimo para o banner hero da documentação. */
+
+.vulpes-hero {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1.5rem auto;
+}
